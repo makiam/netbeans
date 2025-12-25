@@ -37,10 +37,10 @@ import org.openide.util.NbBundle;
  */
 public class DelegatePanel extends javax.swing.JPanel implements PropertyChangeListener {
 
-    private JTextComponent component;
-    private ElementHandle<TypeElement> handle;
-    private ElementSelectorPanel delegateSelector;
-    private ElementSelectorPanel methodSelector;
+    private final JTextComponent component;
+    private final ElementHandle<TypeElement> handle;
+    private final ElementSelectorPanel delegateSelector;
+    private final ElementSelectorPanel methodSelector;
 
     /** Creates new form DelegatePanel */
     public DelegatePanel(JTextComponent component, ElementHandle<TypeElement> handle, ElementNode.Description description) {
@@ -59,12 +59,10 @@ public class DelegatePanel extends javax.swing.JPanel implements PropertyChangeL
         delegateSelector.getExplorerManager().addPropertyChangeListener(this);
         
         methodSelector = new ElementSelectorPanel(null, false);
-        methodSelector.getExplorerManager().addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                firePropertyChange(evt.getPropertyName(), evt.getOldValue(), evt.getNewValue());
-            }
+        methodSelector.getExplorerManager().addPropertyChangeListener((PropertyChangeEvent evt) -> {
+            firePropertyChange(evt.getPropertyName(), evt.getOldValue(), evt.getNewValue());
         });
+        
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -148,14 +146,13 @@ public class DelegatePanel extends javax.swing.JPanel implements PropertyChangeL
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if ( ExplorerManager.PROP_SELECTED_NODES.equals(evt.getPropertyName()) ) {
-            SwingUtilities.invokeLater(new Runnable() {                 
-                public void run() {
-                    ElementHandle<? extends VariableElement> fieldHandle = (ElementHandle<? extends VariableElement>) getDelegateField();
-                    methodSelector.setRootElement(handle == null || fieldHandle == null ? null : DelegateMethodGenerator.getAvailableMethods(component, handle, fieldHandle), false);
-                    methodSelector.doInitialExpansion(-1);            
-                }
+            SwingUtilities.invokeLater(() -> {
+                ElementHandle<? extends VariableElement> fieldHandle = (ElementHandle<? extends VariableElement>) getDelegateField();
+                methodSelector.setRootElement(handle == null || fieldHandle == null ? null : DelegateMethodGenerator.getAvailableMethods(component, handle, fieldHandle), false);
+                methodSelector.doInitialExpansion(-1);
             });
         }
     }

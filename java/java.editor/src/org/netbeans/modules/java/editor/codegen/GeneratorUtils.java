@@ -210,12 +210,9 @@ public class GeneratorUtils {
 	buttons[0].getAccessibleContext().setAccessibleDescription(NbBundle.getMessage(GeneratorUtils.class, "A11Y_Generate"));
         buttons[1] = new JButton(NbBundle.getMessage(GeneratorUtils.class, "LBL_cancel_button") );
         final DialogDescriptor dd = new DialogDescriptor(content, label, true, buttons, buttons[0], DialogDescriptor.DEFAULT_ALIGN, null, null);
-        dd.addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                if (DialogDescriptor.PROP_VALID.equals(evt.getPropertyName())) {
-                    buttons[0].setEnabled(dd.isValid());
-                }
+        dd.addPropertyChangeListener((PropertyChangeEvent evt) -> {
+            if (DialogDescriptor.PROP_VALID.equals(evt.getPropertyName())) {
+                buttons[0].setEnabled(dd.isValid());
             }
         });
         return dd;

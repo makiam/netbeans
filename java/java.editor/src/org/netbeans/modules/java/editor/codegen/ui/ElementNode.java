@@ -125,6 +125,7 @@ public class ElementNode extends AbstractNode {
             setKeys(descriptions);            
         }
         
+        @Override
         protected Node[] createNodes(Description key) {
             return new Node[] {new ElementNode(key, true)};
         }

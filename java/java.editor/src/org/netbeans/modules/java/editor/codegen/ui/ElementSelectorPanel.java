@@ -36,7 +36,6 @@ import org.netbeans.api.java.source.ElementHandle;
 import org.openide.awt.Mnemonics;
 import org.openide.explorer.ExplorerManager;
 import org.openide.nodes.Node;
-import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
 
 /**
@@ -84,12 +83,8 @@ public class ElementSelectorPanel extends JPanel implements ExplorerManager.Prov
 
             add(buttonPanel, BorderLayout.SOUTH);
             
-            ActionListener al = new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    selectAllNodes(e.getSource() == selectAll);
-                }
-            };
+            ActionListener al = (ActionEvent e) -> selectAllNodes(e.getSource() == selectAll);
+            
             selectAll.addActionListener(al);
             selectNone.addActionListener(al);
         }
@@ -140,7 +135,7 @@ public class ElementSelectorPanel extends JPanel implements ExplorerManager.Prov
     }
     
     public List<ElementHandle<? extends Element>> getTreeSelectedElements() {
-        ArrayList<ElementHandle<? extends Element>> handles = new ArrayList<ElementHandle<? extends Element>>();
+        ArrayList<ElementHandle<? extends Element>> handles = new ArrayList<>();
                 
         for (Node node : manager.getSelectedNodes()) {
             if (node instanceof ElementNode) {
@@ -153,7 +148,7 @@ public class ElementSelectorPanel extends JPanel implements ExplorerManager.Prov
     }    
         
     public List<ElementHandle<? extends Element>> getSelectedElements() {
-        ArrayList<ElementHandle<? extends Element>> handles = new ArrayList<ElementHandle<? extends Element>>();
+        ArrayList<ElementHandle<? extends Element>> handles = new ArrayList<>();
             
         Node n = manager.getRootContext();        
         ElementNode.Description description = n.getLookup().lookup(ElementNode.Description.class);
@@ -242,6 +237,7 @@ public class ElementSelectorPanel extends JPanel implements ExplorerManager.Prov
     
     // ExplorerManager.Provider imlementation ----------------------------------
     
+    @Override
     public ExplorerManager getExplorerManager() {
         return manager;
     }

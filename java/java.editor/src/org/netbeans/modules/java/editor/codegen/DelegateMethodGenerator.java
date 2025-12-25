@@ -160,25 +160,22 @@ public class DelegateMethodGenerator implements CodeGenerator {
             if (js != null) {
                 try {
                     final int caretOffset = component.getCaretPosition();
-                    ModificationResult mr = js.runModificationTask(new Task<WorkingCopy>() {
-                        @Override
-                        public void run(WorkingCopy copy) throws IOException {
-                            copy.toPhase(JavaSource.Phase.ELEMENTS_RESOLVED);
-                            Element e = handle.resolve(copy);
-                            TreePath path = e != null ? copy.getTrees().getPath(e) : copy.getTreeUtilities().pathFor(caretOffset);
-                            path = copy.getTreeUtilities().getPathElementOfKind(TreeUtilities.CLASS_TREE_KINDS, path);
-                            if (path == null) {
-                                String message = NbBundle.getMessage(DelegateMethodGenerator.class, "ERR_CannotFindOriginalClass"); //NOI18N
-                                Utilities.setStatusBoldText(component, message);
-                            } else {
-                                ElementHandle<? extends Element> handle = panel.getDelegateField();
-                                VariableElement delegate = handle != null ? (VariableElement)handle.resolve(copy) : null;
-                                ArrayList<ExecutableElement> methods = new ArrayList<>();
-                                for (ElementHandle<? extends Element> elementHandle : panel.getDelegateMethods()) {
-                                    methods.add((ExecutableElement)elementHandle.resolve(copy));
-                                }
-                                generateDelegatingMethods(copy, path, delegate, methods, caretOffset);
+                    ModificationResult mr = js.runModificationTask((WorkingCopy copy) -> {
+                        copy.toPhase(JavaSource.Phase.ELEMENTS_RESOLVED);
+                        Element e = handle.resolve(copy);
+                        TreePath path = e != null ? copy.getTrees().getPath(e) : copy.getTreeUtilities().pathFor(caretOffset);
+                        path = copy.getTreeUtilities().getPathElementOfKind(TreeUtilities.CLASS_TREE_KINDS, path);
+                        if (path == null) {
+                            String message = NbBundle.getMessage(DelegateMethodGenerator.class, "ERR_CannotFindOriginalClass"); //NOI18N
+                            Utilities.setStatusBoldText(component, message);
+                        } else {
+                            ElementHandle<? extends Element> handle1 = panel.getDelegateField();
+                            VariableElement delegate = handle1 != null ? (VariableElement) handle1.resolve(copy) : null;
+                            ArrayList<ExecutableElement> methods = new ArrayList<>();
+                            for (ElementHandle<? extends Element> elementHandle : panel.getDelegateMethods()) {
+                                methods.add((ExecutableElement)elementHandle.resolve(copy));
                             }
+                            generateDelegatingMethods(copy, path, delegate, methods, caretOffset);
                         }
                     });
                     GeneratorUtils.guardedCommit(component, mr);
