@@ -143,13 +143,12 @@ public class DelegateMethodGenerator implements CodeGenerator {
     public void invoke() {
         final DelegatePanel panel = new DelegatePanel(component, handle, description);
         final DialogDescriptor dialogDescriptor = GeneratorUtils.createDialogDescriptor(panel, NbBundle.getMessage(ConstructorGenerator.class, "LBL_generate_delegate")); //NOI18N
-        panel.addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                List<ElementHandle<? extends Element>> meths = panel.getDelegateMethods();
-                dialogDescriptor.setValid(meths != null && !meths.isEmpty());
-            }
+        
+        panel.addPropertyChangeListener((PropertyChangeEvent evt) -> {
+            List<ElementHandle<? extends Element>> meths = panel.getDelegateMethods();
+            dialogDescriptor.setValid(meths != null && !meths.isEmpty());
         });
+        
         Dialog dialog = DialogDisplayer.getDefault().createDialog(dialogDescriptor);
         dialog.setVisible(true);
         if (dialogDescriptor.getValue() == dialogDescriptor.getDefaultValue()) {
